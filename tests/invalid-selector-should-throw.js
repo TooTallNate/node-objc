@@ -7,10 +7,11 @@ var objc = require('../')
 var pool = objc.objc_msgSend(NSAutoreleasePool, alloc);
 pool = objc.objc_msgSend(pool, init);
 
-console.log(pool);
-
 try {
   objc.objc_msgSend(pool, bad);
 } catch (e) {
+  console.error(e.name);
+  console.error(e.message);
+  console.error(e.info);
   throw e;
 }
