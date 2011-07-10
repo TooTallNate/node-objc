@@ -19,7 +19,7 @@ namespace node_objc {
     // Load the framework
     void *sdl_library = dlopen(*frameworkStr, RTLD_LAZY);
     if (sdl_library == NULL) {
-      return v8::ThrowException(v8::Exception::Error(v8::String::New("Failed to load framework!")));
+      return v8::ThrowException(v8::Exception::Error(v8::String::New(dlerror())));
     }
     return Undefined();
   }
