@@ -88,6 +88,9 @@ namespace node_objc {
     }
 
     //NSLog(@"Length: %d", [result length]);
+    if (!result) {
+      return Null();
+    }
 
     v8::Handle<Object> wrap = WrapId(result);
 
