@@ -32,6 +32,19 @@ namespace node_objc {
     return scope.Close(wrap);
   }
 
+  // For debugging libffi...
+  id fake_msgSend (id ref, SEL sel, ...) {
+    int j;
+    va_list ap;
+    va_start(ap, sel); //Requires the last fixed parameter (to get the address)
+    for(j=0; j<1; j++) {
+      const char * param = va_arg(ap, const char *); //Requires the type to cast to. Increments ap to the next argument.
+      NSLog(@"string: %s", param);
+    }
+    va_end(ap);
+    return ref;
+  }
+
   v8::Handle<Value> node_objc_msgSend (const Arguments& args) {
     HandleScope scope;
 
@@ -73,6 +86,8 @@ namespace node_objc {
     }
 
     ffi_call(&cif, FFI_FN(objc_msgSend), &result, arg_values);
+
+    //NSLog(@"Class: %@", [result class]);
 
     Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
     IdWrap *rtnWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
