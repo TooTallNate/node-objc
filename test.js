@@ -6,4 +6,5 @@ var objc = require('./')
 var a = objc.objc_msgSend(NSMutableArray, alloc);
 a = objc.objc_msgSend(a, init);
 
-objc.NSLog(a);
+console.log(''+a);
+//objc.NSLog(a);

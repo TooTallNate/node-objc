@@ -3,6 +3,7 @@
 #include <objc/objc.h>
 #include <objc/message.h>
 #include <objc/runtime.h>
+#include <ffi/ffi.h>
 #include "IdWrap.h"
 #include "SelectorWrap.h"
 #include "objc.h"
@@ -31,17 +32,50 @@ namespace node_objc {
     return scope.Close(wrap);
   }
 
+     unsigned char
+            foo(unsigned int x, float y)
+                 {
+                            unsigned char result = x - y;
+                                     return result;
+                                          }
+
+
   v8::Handle<Value> node_objc_msgSend (const Arguments& args) {
     HandleScope scope;
+
+    ffi_cif cif;
+    ffi_type *arg_types[2];
+    void *arg_values[2];
+    ffi_status status;
+
+    id result;
+
+    arg_types[0] = &ffi_type_pointer;
+    arg_types[1] = &ffi_type_pointer;
+
+    if ((status = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_pointer, arg_types)) != FFI_OK)
+    {
+      // Handle the ffi_status error.
+    }
+
     IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(args[0]->ToObject());
     SelectorWrap *selWrap = ObjectWrap::Unwrap<SelectorWrap>(args[1]->ToObject());
     id ref = idWrap->ref;
     SEL sel = selWrap->sel;
-    id rtn = objc_msgSend(ref, sel);
+    arg_values[0] = &ref;
+    arg_values[1] = &sel;
 
-    v8::Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
+    ffi_call(&cif, FFI_FN(foo), &result, arg_values);
+
+    /*IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(args[0]->ToObject());
+    SelectorWrap *selWrap = ObjectWrap::Unwrap<SelectorWrap>(args[1]->ToObject());
+    id ref = idWrap->ref;
+    SEL sel = selWrap->sel;
+    id rtn = objc_msgSend(ref, sel);*/
+
+    Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
     IdWrap *rtnWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
-    rtnWrap->ref = rtn;
+    rtnWrap->ref = result;
     return scope.Close(wrap);
   }
 
