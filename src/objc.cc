@@ -13,10 +13,16 @@ namespace node_objc {
   v8::Handle<Value> node_objc_getClass (const Arguments& args) {
     HandleScope scope;
     String::Utf8Value classStr(args[0]->ToString());
+    // get the requested Class
     Class c = objc_getClass(*classStr);
-    //Local<v8::Object> wrap = id_constructor_template->GetFunction->NewInstance();
-    NSLog(@"%@", c);
-    return Undefined();
+    // if null was returned, then return JavaScript null
+    if (!c) {
+      return Null();
+    }
+    v8::Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
+    IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
+    idWrap->ref = c;
+    return scope.Close(wrap);
   }
 
   // INIT function
