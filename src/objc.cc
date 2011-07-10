@@ -71,7 +71,8 @@ namespace node_objc {
         const char * cStrVal = *strVal;
         arg_values[i] = &cStrVal;
       } else {
-
+        id val = UnwrapId(args[i]->ToObject());
+        arg_values[i] = &val;
       }
     }
 
