@@ -1,3 +1,5 @@
+#import <Foundation/Foundation.h>
+#include "helpers.h"
 #include "IdWrap.h"
 
 using namespace node;
@@ -22,6 +24,14 @@ void IdWrap::Init(v8::Handle<Object> target) {
 
   NODE_SET_PROTOTYPE_METHOD(t, "toString", ToString);
 
+  // Casting functions
+  // NSArray to Array
+  //NODE_SET_PROTOTYPE_METHOD(t, "toArray", ToArray);
+  // NSNumber to Number
+  //NODE_SET_PROTOTYPE_METHOD(t, "toNumber", ToNumber);
+  // NSInteger to Number
+  //NODE_SET_PROTOTYPE_METHOD(t, "intToNumber", IntToNumber);
+
   target->Set(ID_CLASS_SYMBOL, id_constructor_template->GetFunction());
 }
 
@@ -44,9 +54,16 @@ v8::Handle<Value> IdWrap::New(const Arguments& args) {
 // ToString //////////////////////////////////////////////////////////////////
 v8::Handle<Value> IdWrap::ToString(const Arguments& args) {
   HandleScope scope;
-  IdWrap *item = ObjectWrap::Unwrap<IdWrap>(args.This());
-  Local<String> str = String::New((const char *)[[item->ref description] UTF8String]);
-  return scope.Close(str);
+  id ref = UnwrapId(args.This());
+  NSString *str;
+  //@try {
+  if ([ref isKindOfClass: [NSString class]]) {
+    str = (NSString *)ref;
+  } else {
+    str = [ref description];
+  }
+  Local<String> rtn = String::New((const char *)[str UTF8String]);
+  return scope.Close(rtn);
 }
 
 } // namespace node_iTunes

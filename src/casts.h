@@ -3,6 +3,6 @@
 
 namespace node_objc {
 
-  void objcInit(v8::Handle<v8::Object>);
+  void castsInit(v8::Handle<v8::Object>);
 
 } // namespace node_objc

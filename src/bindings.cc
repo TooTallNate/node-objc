@@ -3,6 +3,7 @@
 #include "IdWrap.h"
 #include "SelectorWrap.h"
 #include "dlopen.h"
+#include "casts.h"
 #include "objc.h"
 
 using namespace node;
@@ -14,6 +15,7 @@ extern "C" void init(v8::Handle<Object> target) {
   HandleScope scope;
   IdWrap::Init(target);
   SelectorWrap::Init(target);
+  castsInit(target);
   dlopenInit(target);
   objcInit(target);
 }
