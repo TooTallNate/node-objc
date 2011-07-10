@@ -16,12 +16,12 @@ that but that should help show the capabilities).
 This module also takes care of marshalling JavaScript data types to and from
 Objective-C classes. The matchup between types and classes looks like:
 
-   String   <-->  NSString
-   Number   <-->  NSNumber
-   Date     <-->  NSDate
-   Object   <-->  NSDictionary
-   Boolean  <-->  BOOL
-   Function <-->  Method
+    String   <-->  NSString
+    Number   <-->  NSNumber
+    Date     <-->  NSDate
+    Object   <-->  NSDictionary
+    Boolean  <-->  BOOL
+    Function <-->  Method
 
 
 Example
