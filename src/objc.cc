@@ -5,6 +5,7 @@
 #include <objc/runtime.h>
 #include <ffi/ffi.h>
 #include "objc.h"
+#include "IdWrap.h"
 #include "helpers.h"
 
 // Debug
@@ -66,11 +67,23 @@ namespace node_objc {
     for (int i=2; i < argv; i++) {
       val = args[i];
       arg_types[i] = &ffi_type_pointer;
-      if (val->IsString()) {
+      if (val->IsNull()) {
+        id nilVal = nil;
+        arg_values[i] = &nilVal;
+      } else if (val->IsBoolean()) {
+        BOOL boolVal = val->BooleanValue();
+        arg_types[i] = &ffi_type_schar;
+        arg_values[i] = &boolVal;
+      } else if (val->IsString()) {
         String::Utf8Value strVal(val->ToObject());
         const char * cStrVal = *strVal;
         arg_values[i] = &cStrVal;
-      } else {
+      } else if (val->IsNumber()) {
+        // TODO: Figure out an elegant way to specify to use an NSUInteger...
+        NSInteger input = val->Int32Value();
+        arg_types[i] = &ffi_type_sint;
+        arg_values[i] = &input;
+      } else if (id_constructor_template->HasInstance(val)) {
         id val = UnwrapId(args[i]->ToObject());
         arg_values[i] = &val;
       }
