@@ -16,6 +16,7 @@ namespace node_objc {
       return ThrowException(Exception::TypeError(String::New("A 'String' argument is required!")));
     }
     String::Utf8Value frameworkStr(args[0]->ToString());
+    // Load the framework
     void *sdl_library = dlopen(*frameworkStr, RTLD_LAZY);
     if (sdl_library == NULL) {
       return v8::ThrowException(v8::Exception::Error(v8::String::New("Failed to load framework!")));
