@@ -7,5 +7,3 @@ var NSString = objc.objc_getClass('NSString')
   , helloNsStr = objc.objc_msgSend(NSString, stringSelector, helloStr)
 
 // log the string with NSLog
-console.log(helloNsStr+'');
-objc.NSLog(helloNsStr);

@@ -7,6 +7,7 @@
 #include "IdWrap.h"
 #include "SelectorWrap.h"
 #include "objc.h"
+#include "helpers.h"
 
 // Debug
 #import <Foundation/Foundation.h>
@@ -85,9 +86,14 @@ namespace node_objc {
       return v8::ThrowException(v8::Exception::Error(v8::String::New("`ffi_prep_cif` failed!")));
     }
 
-    ffi_call(&cif, FFI_FN(objc_msgSend), &result, arg_values);
+    @try {
+      ffi_call(&cif, FFI_FN(objc_msgSend), &result, arg_values);
+    }
+    @catch (NSException *e) {
+      return v8::ThrowException(NSExceptionToV8Error(e));
+    }
 
-    //NSLog(@"Class: %@", [result class]);
+    //NSLog(@"Length: %d", [result length]);
 
     Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
     IdWrap *rtnWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
