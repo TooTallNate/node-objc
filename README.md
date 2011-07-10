@@ -30,14 +30,19 @@ Example
 ``` javascript
 var objc = require('objc');
 
-// create an NSString from a JavaScript String
-var NSString = objc.objc_getClass('NSString')
-  , stringSelector = objc.sel_registerName('stringWithUTF8String:')
-  , helloStr   = 'Hello World!'
-  , helloNsStr = objc.objc_msgSend(NSString, stringSelector, helloStr)
+// Create an NSMutableArray
+var NSMutableArray = objc.objc_getClass('NSMutableArray')
+  , alloc = objc.sel_registerName('alloc')
+  , init = objc.sel_registerName('init')
+  , array = objc.objc_msgSend(objc.objc_msgSend(NSMutableArray, alloc), init)
 
-// log the string with NSLog
-obj.NSLog(helloNsStr);
+// Add some JS objects to the NSMutableArray instance
+var addObject = objc.sel_registerName('addObject:');
+objc.objc_msgSend(array, addObject, "Hello World");
+objc.objc_msgSend(array, addObject, { foo: 'bar' });
+
+// log the array's contents with NSLog
+objc.NSLog(array);
 ```
 
 [NodeJS]: http://nodejs.org
