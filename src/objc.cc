@@ -1,4 +1,3 @@
-#import <Foundation/Foundation.h>
 #include <v8.h>
 #include <node.h>
 #include <objc/runtime.h>
