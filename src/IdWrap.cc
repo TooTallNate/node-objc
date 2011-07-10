@@ -12,7 +12,7 @@ void IdWrap::Init(v8::Handle<Object> target) {
   HandleScope scope;
 
   // String Constants
-  ID_CLASS_SYMBOL = NODE_PSYMBOL("ID");
+  ID_CLASS_SYMBOL = NODE_PSYMBOL("IdWrap");
 
   // Set up the 'IdWrap' base-class constructor template
   Local<FunctionTemplate> t = FunctionTemplate::New(New);
