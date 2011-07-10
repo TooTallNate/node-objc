@@ -1,8 +1,5 @@
 var objc = require('../');
 
-// import the Foundation framework
-objc.import('Foundation');
-
 // create an NSString from a JavaScript String
 var NSString = objc.objc_getClass('NSString')
   , stringSelector = objc.sel_registerName('stringWithUTF8String:')
@@ -10,4 +7,5 @@ var NSString = objc.objc_getClass('NSString')
   , helloNsStr = objc.objc_msgSend(NSString, stringSelector, helloStr)
 
 // log the string with NSLog
-obj.NSLog(helloNsStr);
+console.log(helloNsStr+'');
+objc.NSLog(helloNsStr);
