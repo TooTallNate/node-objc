@@ -4,8 +4,6 @@
 #include <objc/message.h>
 #include <objc/runtime.h>
 #include <ffi/ffi.h>
-#include "IdWrap.h"
-#include "SelectorWrap.h"
 #include "objc.h"
 #include "helpers.h"
 
@@ -27,10 +25,7 @@ namespace node_objc {
     if (!c) {
       return Null();
     }
-    v8::Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
-    IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
-    idWrap->ref = c;
-    return scope.Close(wrap);
+    return scope.Close(WrapId(c));
   }
 
   // For debugging libffi...
@@ -62,10 +57,8 @@ namespace node_objc {
     arg_types[0] = &ffi_type_pointer;
     arg_types[1] = &ffi_type_pointer;
 
-    IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(args[0]->ToObject());
-    SelectorWrap *selWrap = ObjectWrap::Unwrap<SelectorWrap>(args[1]->ToObject());
-    id ref = idWrap->ref;
-    SEL sel = selWrap->sel;
+    id ref = UnwrapId(args[0]->ToObject());
+    SEL sel = UnwrapSel(args[1]->ToObject());
     arg_values[0] = &ref;
     arg_values[1] = &sel;
 
@@ -95,9 +88,7 @@ namespace node_objc {
 
     //NSLog(@"Length: %d", [result length]);
 
-    Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
-    IdWrap *rtnWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
-    rtnWrap->ref = result;
+    v8::Handle<Object> wrap = WrapId(result);
 
     free(arg_types);
     free(arg_values);
@@ -111,17 +102,14 @@ namespace node_objc {
     if (!sel) {
       return Null();
     }
-    Local<Object> wrap = sel_constructor_template->GetFunction()->NewInstance();
-    SelectorWrap *selWrap = ObjectWrap::Unwrap<SelectorWrap>(wrap);
-    selWrap->sel = sel;
-    return scope.Close(wrap);
+    return scope.Close(WrapSel(sel));
   }
 
   v8::Handle<Value> node_NSLog (const Arguments& args) {
     HandleScope scope;
 
-    IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(args[0]->ToObject());
-    NSLog(@"%@", idWrap->ref);
+    id ref = UnwrapId(args[0]->ToObject());
+    NSLog(@"%@", ref);
     return Undefined();
   }
 
