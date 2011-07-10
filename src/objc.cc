@@ -32,14 +32,6 @@ namespace node_objc {
     return scope.Close(wrap);
   }
 
-     unsigned char
-            foo(unsigned int x, float y)
-                 {
-                            unsigned char result = x - y;
-                                     return result;
-                                          }
-
-
   v8::Handle<Value> node_objc_msgSend (const Arguments& args) {
     HandleScope scope;
 
@@ -47,16 +39,12 @@ namespace node_objc {
     ffi_type *arg_types[2];
     void *arg_values[2];
     ffi_status status;
+    int argv = args.Length();
 
     id result;
 
     arg_types[0] = &ffi_type_pointer;
     arg_types[1] = &ffi_type_pointer;
-
-    if ((status = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 2, &ffi_type_pointer, arg_types)) != FFI_OK)
-    {
-      // Handle the ffi_status error.
-    }
 
     IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(args[0]->ToObject());
     SelectorWrap *selWrap = ObjectWrap::Unwrap<SelectorWrap>(args[1]->ToObject());
@@ -65,13 +53,11 @@ namespace node_objc {
     arg_values[0] = &ref;
     arg_values[1] = &sel;
 
-    ffi_call(&cif, FFI_FN(foo), &result, arg_values);
+    if ((status = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, argv, &ffi_type_pointer, arg_types)) != FFI_OK) {
+      return v8::ThrowException(v8::Exception::Error(v8::String::New("`ffi_prep_cif` failed!")));
+    }
 
-    /*IdWrap *idWrap = ObjectWrap::Unwrap<IdWrap>(args[0]->ToObject());
-    SelectorWrap *selWrap = ObjectWrap::Unwrap<SelectorWrap>(args[1]->ToObject());
-    id ref = idWrap->ref;
-    SEL sel = selWrap->sel;
-    id rtn = objc_msgSend(ref, sel);*/
+    ffi_call(&cif, FFI_FN(objc_msgSend), &result, arg_values);
 
     Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
     IdWrap *rtnWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
