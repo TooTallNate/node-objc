@@ -36,12 +36,14 @@ namespace node_objc {
     HandleScope scope;
 
     ffi_cif cif;
-    ffi_type *arg_types[2];
-    void *arg_values[2];
-    ffi_status status;
     int argv = args.Length();
-
+    ffi_type  **arg_types;
+    void      **arg_values;
+    ffi_status status;
     id result;
+
+    arg_types  = (ffi_type **) malloc(argv*sizeof(ffi_type *));
+    arg_values = (void **) malloc(argv*sizeof(void *));
 
     arg_types[0] = &ffi_type_pointer;
     arg_types[1] = &ffi_type_pointer;
@@ -53,6 +55,19 @@ namespace node_objc {
     arg_values[0] = &ref;
     arg_values[1] = &sel;
 
+    Local<Value> val;
+    for (int i=2; i < argv; i++) {
+      val = args[i];
+      arg_types[i] = &ffi_type_pointer;
+      if (val->IsString()) {
+        String::Utf8Value strVal(val->ToObject());
+        const char * cStrVal = *strVal;
+        arg_values[i] = &cStrVal;
+      } else {
+
+      }
+    }
+
     if ((status = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, argv, &ffi_type_pointer, arg_types)) != FFI_OK) {
       return v8::ThrowException(v8::Exception::Error(v8::String::New("`ffi_prep_cif` failed!")));
     }
@@ -62,6 +77,9 @@ namespace node_objc {
     Local<v8::Object> wrap = id_constructor_template->GetFunction()->NewInstance();
     IdWrap *rtnWrap = ObjectWrap::Unwrap<IdWrap>(wrap);
     rtnWrap->ref = result;
+
+    free(arg_types);
+    free(arg_values);
     return scope.Close(wrap);
   }
 
