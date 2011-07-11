@@ -1,12 +1,12 @@
 var objc = require('../')
   , NSMutableArray = objc.objc_getClass('NSMutableArray')
   , alloc = objc.sel_registerName('alloc')
-  , init = objc.sel_registerName('init')
+  , init = objc.sel_registerName('initWithCapacity:')
   , addObject = objc.sel_registerName('addObject:')
 
 // Create an NSMutableArray instance
 var a = objc.objc_msgSend(NSMutableArray, alloc);
-a = objc.objc_msgSend(a, init);
+a = objc.objc_msgSend(a, init, 100);
 
 // Add an object to the array
 objc.objc_msgSend(a, addObject, NSMutableArray);
