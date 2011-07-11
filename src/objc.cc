@@ -68,7 +68,7 @@ namespace node_objc {
     for (int i=2; i < argv; i++) {
       val = args[i];
       arg_types[i] = &ffi_type_pointer;
-      if (val->IsNull()) {
+      if (val->IsNull() || val->IsUndefined()) {
         id nilVal = nil;
         arg_values[i] = &nilVal;
       } else if (val->IsBoolean()) {
@@ -99,6 +99,8 @@ namespace node_objc {
     }
 
     if ((status = ffi_prep_cif(&cif, FFI_DEFAULT_ABI, argv, &ffi_type_pointer, arg_types)) != FFI_OK) {
+      free(arg_types);
+      free(arg_values);
       return v8::ThrowException(v8::Exception::Error(v8::String::New("`ffi_prep_cif` failed!")));
     }
 
@@ -106,11 +108,15 @@ namespace node_objc {
       ffi_call(&cif, FFI_FN(objc_msgSend), &result, arg_values);
     }
     @catch (NSException *e) {
+      free(arg_types);
+      free(arg_values);
       return v8::ThrowException(NSExceptionToV8Error(e));
     }
 
     //NSLog(@"Length: %d", [result length]);
     if (result == nil) {
+      free(arg_types);
+      free(arg_values);
       return Null();
     }
 
