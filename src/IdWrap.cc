@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #include "helpers.h"
+#include "JsWrap.h"
 #include "IdWrap.h"
 
 using namespace node;
@@ -31,6 +32,7 @@ void IdWrap::Init(v8::Handle<Object> target) {
   //NODE_SET_PROTOTYPE_METHOD(t, "toNumber", ToNumber);
   // NSInteger to Number
   //NODE_SET_PROTOTYPE_METHOD(t, "intToNumber", IntToNumber);
+  NODE_SET_PROTOTYPE_METHOD(t, "unwrap", Unwrap);
 
   target->Set(ID_CLASS_SYMBOL, id_constructor_template->GetFunction());
 }
@@ -49,6 +51,14 @@ v8::Handle<Value> IdWrap::New(const Arguments& args) {
   IdWrap *idWrap = new IdWrap();
   idWrap->Wrap(args.This());
   return args.This();
+}
+
+// Unwrap /////////////////////////////////////////////////////////////////////
+v8::Handle<Value> IdWrap::Unwrap(const Arguments& args) {
+  HandleScope scope;
+  id ref = UnwrapId(args.This());
+  JsWrap *wrap = (JsWrap *)ref;
+  return scope.Close(wrap->ref);
 }
 
 // ToString //////////////////////////////////////////////////////////////////

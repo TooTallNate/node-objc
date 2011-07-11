@@ -22,6 +22,7 @@ public:
 
   // 'toString()' override
   static v8::Handle<v8::Value> ToString(const v8::Arguments&);
+  static v8::Handle<v8::Value> Unwrap(const v8::Arguments&);
 
 }; // class IdWrap
 
