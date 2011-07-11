@@ -6,6 +6,7 @@
 #include <ffi/ffi.h>
 #include "objc.h"
 #include "IdWrap.h"
+#include "JsWrap.h"
 #include "helpers.h"
 
 // Debug
@@ -84,8 +85,16 @@ namespace node_objc {
         arg_types[i] = &ffi_type_sint;
         arg_values[i] = &input;
       } else if (id_constructor_template->HasInstance(val)) {
-        id val = UnwrapId(args[i]->ToObject());
-        arg_values[i] = &val;
+        id wrapVal = UnwrapId(args[i]->ToObject());
+        arg_values[i] = &wrapVal;
+      } else {
+        // If we got here then we got a regular JS object that will be wrapped
+        // up to be passed into the Objective-C runtime. From there it can be
+        // passed around ObjC objects like an NSArray, etc.
+        JsWrap *wrapVal = [[JsWrap alloc] init];
+        Persistent<Value> jsVal = Persistent<Value>::New(val);
+        wrapVal->ref = jsVal;
+        arg_values[i] = &wrapVal;
       }
     }
 
@@ -101,7 +110,7 @@ namespace node_objc {
     }
 
     //NSLog(@"Length: %d", [result length]);
-    if (!result) {
+    if (result == nil) {
       return Null();
     }
 

@@ -30,11 +30,13 @@ namespace node_objc {
   }
 
   id UnwrapId(v8::Handle<Object> obj) {
+    HandleScope scope;
     IdWrap *wrap = ObjectWrap::Unwrap<IdWrap>(obj);
     return wrap->ref;
   }
 
   SEL UnwrapSel(v8::Handle<Object> obj) {
+    HandleScope scope;
     SelectorWrap *wrap = ObjectWrap::Unwrap<SelectorWrap>(obj);
     return wrap->sel;
   }

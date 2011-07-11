@@ -12,4 +12,4 @@ def build(bld):
   obj.framework = ["Foundation"]
   obj.target = "bindings"
   obj.source = ["src/bindings.cc", "src/dlopen.cc", "src/objc.cc", "src/IdWrap.cc",
-       "src/SelectorWrap.cc", "src/casts.cc", "src/helpers.cc"]
+       "src/SelectorWrap.cc", "src/JsWrap.cc", "src/casts.cc", "src/helpers.cc"]
