@@ -3,7 +3,11 @@
 #include <objc/objc.h>
 #include <objc/message.h>
 #include <objc/runtime.h>
+#ifdef HAVE_FFI_DIR
 #include <ffi/ffi.h>
+#else
+#include <ffi.h>
+#endif
 #include "objc.h"
 #include "IdWrap.h"
 #include "JsWrap.h"
