@@ -31,7 +31,8 @@ void IdWrap::Init(v8::Handle<Object> target) {
   // NSNumber to Number
   //NODE_SET_PROTOTYPE_METHOD(t, "toNumber", ToNumber);
   // NSInteger to Number
-  //NODE_SET_PROTOTYPE_METHOD(t, "intToNumber", IntToNumber);
+  NODE_SET_PROTOTYPE_METHOD(t, "intToNumber", IntToNumber);
+  // Unwrap a `JsWrap` instance
   NODE_SET_PROTOTYPE_METHOD(t, "unwrap", Unwrap);
 
   target->Set(ID_CLASS_SYMBOL, id_constructor_template->GetFunction());
@@ -74,6 +75,13 @@ v8::Handle<Value> IdWrap::ToString(const Arguments& args) {
   }
   Local<String> rtn = String::New((const char *)[str UTF8String]);
   return scope.Close(rtn);
+}
+
+// IntToNumber ////////////////////////////////////////////////////////////////
+v8::Handle<Value> IdWrap::IntToNumber(const Arguments& args) {
+  HandleScope scope;
+  NSInteger val = (NSInteger)UnwrapId(args.This());
+  return scope.Close(Integer::New(val));
 }
 
 } // namespace node_iTunes
