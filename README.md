@@ -47,4 +47,4 @@ objc.NSLog(array);
 ```
 
 [NodeJS]: http://nodejs.org
-[NobObjc]: https://github.com/TooTallNate/NodObjC
+[NodObjc]: https://github.com/TooTallNate/NodObjC
