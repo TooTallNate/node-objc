@@ -1,7 +1,8 @@
 node-objc
 =========
-### A bridge between [NodeJS][] and the Objective-C Runtime
+### Experiment: A bridge between [NodeJS][] and the Objective-C Runtime
 
+## DON'T USE THIS!! This module is deprecated in favor of [NodObjC][]. Use that instead.
 
 This module offers a low-level interface to the Objective-C runtime. It is
 meant to be as close to a 1:1 mapping of Apple's low-level runtime APIs as
@@ -46,3 +47,4 @@ objc.NSLog(array);
 ```
 
 [NodeJS]: http://nodejs.org
+[NobObjc]: https://github.com/TooTallNate/NodObjC
